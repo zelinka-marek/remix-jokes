@@ -6,20 +6,24 @@ import { Link, Outlet, useLoaderData } from "@remix-run/react";
 import stylesUrl from "~/styles/jokes.css";
 import { db } from "~/utils/db.server";
 
-type LoaderData = {
-  jokeListItems: Array<Joke>;
-};
-
 export const links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: stylesUrl }];
 };
 
-export const loader: LoaderFunction = async () => {
-  const data: LoaderData = {
-    jokeListItems: await db.joke.findMany(),
-  };
+type LoaderData = {
+  jokeListItems: Array<{ id: string; name: string }>;
+};
 
-  return json(data);
+export const loader: LoaderFunction = async () => {
+  const jokeListItems = await db.joke.findMany({
+    take: 5,
+    select: { id: true, name: true },
+    orderBy: { createdAt: "desc" },
+  });
+
+  return json<LoaderData>({
+    jokeListItems,
+  });
 };
 
 export default function Jokes() {
