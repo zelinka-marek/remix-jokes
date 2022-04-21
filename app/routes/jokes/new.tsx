@@ -1,4 +1,4 @@
-export default function NewJoke() {
+export default function NewJokeRoute() {
   return (
     <div>
       <p>Add your own hilarious joke</p>

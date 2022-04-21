@@ -1,4 +1,3 @@
-import type { Joke } from "@prisma/client";
 import type { LinksFunction, LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Link, Outlet, useLoaderData } from "@remix-run/react";
@@ -26,7 +25,7 @@ export const loader: LoaderFunction = async () => {
   });
 };
 
-export default function Jokes() {
+export default function JokesRoute() {
   const { jokeListItems } = useLoaderData<LoaderData>();
 
   return (
