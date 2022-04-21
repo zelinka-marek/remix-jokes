@@ -26,7 +26,7 @@ export const loader: LoaderFunction = async () => {
 };
 
 export default function JokesRoute() {
-  const { jokeListItems } = useLoaderData<LoaderData>();
+  const data = useLoaderData<LoaderData>();
 
   return (
     <div className="jokes-layout">
@@ -46,7 +46,7 @@ export default function JokesRoute() {
             <Link to=".">Get a random joke</Link>
             <p>Here are a few more jokes to check out:</p>
             <ul>
-              {jokeListItems.map((joke) => (
+              {data.jokeListItems.map((joke) => (
                 <li key={joke.id}>
                   <Link to={joke.id}>{joke.name}</Link>
                 </li>
