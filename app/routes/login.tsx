@@ -4,7 +4,14 @@ import type {
   MetaFunction,
 } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { Link, useActionData, useSearchParams } from "@remix-run/react";
+import {
+  Form,
+  Link,
+  useActionData,
+  useSearchParams,
+  useTransition,
+} from "@remix-run/react";
+import * as React from "react";
 
 import stylesUrl from "~/styles/login.css";
 import { db } from "~/utils/db.server";
@@ -45,6 +52,7 @@ type ActionData = {
 const badRequest = (data: ActionData) => json(data, { status: 400 });
 
 export const action: ActionFunction = async ({ request }) => {
+  await new Promise((res) => setTimeout(res, 1600));
   const formData = await request.formData();
   const redirectTo = formData.get("redirectTo") || "/jokes";
   const loginType = formData.get("loginType");
@@ -102,12 +110,24 @@ export const action: ActionFunction = async ({ request }) => {
 export default function LoginRoute() {
   const actionData = useActionData<ActionData>();
   const [searchParams] = useSearchParams();
+  const usernameRef = React.useRef<HTMLInputElement>(null);
+  const passwordRef = React.useRef<HTMLInputElement>(null);
+  const transition = useTransition();
+  const isSubmitting = Boolean(transition.submission);
+
+  React.useEffect(() => {
+    if (actionData?.fieldErrors?.username) {
+      usernameRef.current?.focus();
+    } else if (actionData?.fieldErrors?.password) {
+      passwordRef.current?.focus();
+    }
+  }, [actionData?.fieldErrors]);
 
   return (
     <div className="container">
       <div className="content" data-light="">
         <h1>Login</h1>
-        <form
+        <Form
           method="post"
           aria-describedby={actionData?.formError ? "form-error" : undefined}
         >
@@ -143,6 +163,7 @@ export default function LoginRoute() {
           <div>
             <label htmlFor="username">Username</label>
             <input
+              ref={usernameRef}
               type="text"
               defaultValue={actionData?.fields?.username}
               name="username"
@@ -167,6 +188,7 @@ export default function LoginRoute() {
           <div>
             <label htmlFor="password">Password</label>
             <input
+              ref={passwordRef}
               type="password"
               defaultValue={actionData?.fields?.password}
               name="password"
@@ -195,10 +217,10 @@ export default function LoginRoute() {
               </p>
             ) : null}
           </div>
-          <button type="submit" className="button">
-            Submit
+          <button type="submit" className="button" disabled={isSubmitting}>
+            {isSubmitting ? "Submitting..." : "Submit"}
           </button>
-        </form>
+        </Form>
       </div>
       <div className="links">
         <ul>

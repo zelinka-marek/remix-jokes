@@ -5,7 +5,14 @@ import type {
   MetaFunction,
 } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { Link, useCatch, useLoaderData, useParams } from "@remix-run/react";
+import {
+  Form,
+  Link,
+  useCatch,
+  useLoaderData,
+  useParams,
+  useTransition,
+} from "@remix-run/react";
 
 import { db } from "~/utils/db.server";
 import { getUserId, requireUserId } from "~/utils/session.server";
@@ -72,6 +79,8 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
 export default function JokeRoute() {
   const data = useLoaderData<LoaderData>();
+  const transition = useTransition();
+  const isDeleting = Boolean(transition.submission);
 
   return (
     <div>
@@ -79,12 +88,12 @@ export default function JokeRoute() {
       <p>{data.joke.content}</p>
       <Link to=".">{data.joke.name} Permalink</Link>
       {data.isOwner ? (
-        <form method="post">
+        <Form method="post">
           <input type="hidden" name="intent" value="delete" />
-          <button type="submit" className="button">
-            Delete
+          <button type="submit" className="button" disabled={isDeleting}>
+            {isDeleting ? "Deleting..." : "Delete"}
           </button>
-        </form>
+        </Form>
       ) : null}
     </div>
   );

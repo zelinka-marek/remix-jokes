@@ -1,6 +1,13 @@
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { redirect, json } from "@remix-run/node";
-import { Link, useActionData, useCatch } from "@remix-run/react";
+import {
+  Form,
+  Link,
+  useActionData,
+  useCatch,
+  useTransition,
+} from "@remix-run/react";
+import * as React from "react";
 
 import { db } from "~/utils/db.server";
 import { getUserId, requireUserId } from "~/utils/session.server";
@@ -65,11 +72,23 @@ export const loader: LoaderFunction = async ({ request }) => {
 
 export default function NewJokeRoute() {
   const actionData = useActionData<ActionData>();
+  const nameRef = React.useRef<HTMLInputElement>(null);
+  const contentRef = React.useRef<HTMLTextAreaElement>(null);
+  const transition = useTransition();
+  const isAdding = Boolean(transition.submission);
+
+  React.useEffect(() => {
+    if (actionData?.fieldErrors?.name) {
+      nameRef.current?.focus();
+    } else if (actionData?.fieldErrors?.content) {
+      contentRef.current?.focus();
+    }
+  }, [actionData?.fieldErrors]);
 
   return (
     <div>
       <p>Add your own hilarious joke</p>
-      <form
+      <Form
         method="post"
         aria-describedby={actionData?.formError ? "form-error" : undefined}
       >
@@ -77,6 +96,7 @@ export default function NewJokeRoute() {
           <label>
             Name:
             <input
+              ref={nameRef}
               type="text"
               defaultValue={actionData?.fields?.name}
               name="name"
@@ -96,6 +116,7 @@ export default function NewJokeRoute() {
           <label>
             Content:{" "}
             <textarea
+              ref={contentRef}
               defaultValue={actionData?.fields?.content}
               name="content"
               aria-invalid={
@@ -122,11 +143,11 @@ export default function NewJokeRoute() {
               {actionData.formError}
             </p>
           ) : null}
-          <button type="submit" className="button">
-            Add
+          <button type="submit" className="button" disabled={isAdding}>
+            {isAdding ? "Adding..." : "Add"}
           </button>
         </div>
-      </form>
+      </Form>
     </div>
   );
 }
