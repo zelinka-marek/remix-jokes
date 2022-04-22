@@ -5,15 +5,6 @@ import { Link, useActionData, useCatch } from "@remix-run/react";
 import { db } from "~/utils/db.server";
 import { getUserId, requireUserId } from "~/utils/session.server";
 
-export const loader: LoaderFunction = async ({ request }) => {
-  const userId = await getUserId(request);
-  if (!userId) {
-    throw new Response("Unauthorized", { status: 401 });
-  }
-
-  return json({});
-};
-
 function validateJokeName(name: string) {
   if (name.length < 3) {
     return "That joke's name is too short";
@@ -61,6 +52,15 @@ export const action: ActionFunction = async ({ request }) => {
   });
 
   return redirect(`/jokes/${joke.id}`);
+};
+
+export const loader: LoaderFunction = async ({ request }) => {
+  const userId = await getUserId(request);
+  if (!userId) {
+    throw new Response("Unauthorized", { status: 401 });
+  }
+
+  return json({});
 };
 
 export default function NewJokeRoute() {
