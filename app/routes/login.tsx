@@ -23,7 +23,7 @@ export const links: LinksFunction = () => {
 
 export const meta: MetaFunction = () => {
   return {
-    title: "Remix Jokes | Login",
+    title: "Login | Remix Jokes",
     description: "Login to submit your own jokes to Remix Jokes!",
   };
 };

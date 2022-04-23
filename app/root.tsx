@@ -32,7 +32,7 @@ export const meta: MetaFunction = () => {
 
   return {
     charSet: "utf-8",
-    title: "Remix: So great, it's funny!",
+    title: "Remix Jokes: So great, it's funny!",
     description,
     keywords: "Remix,jokes",
     "twitter:image": "https://remix-jokes.lol/social.png",

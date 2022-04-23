@@ -25,13 +25,13 @@ export const meta: MetaFunction = ({
 }) => {
   if (!data) {
     return {
-      title: "No joke",
+      title: "No joke | Remix Jokes",
       description: "No joke found",
     };
   }
 
   return {
-    title: `"${data.joke.name}" joke`,
+    title: `"${data.joke.name}" joke | Remix Jokes`,
     description: `Enyoj the "${data.joke.name}" joke and much more`,
   };
 };
