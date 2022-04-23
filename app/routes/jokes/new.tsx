@@ -11,6 +11,7 @@ import * as React from "react";
 
 import { db } from "~/utils/db.server";
 import { getUserId, requireUserId } from "~/utils/session.server";
+import JokeDisplay from "~/components/joke";
 
 function validateJokeName(name: string) {
   if (name.length < 3) {
@@ -75,7 +76,6 @@ export default function NewJokeRoute() {
   const nameRef = React.useRef<HTMLInputElement>(null);
   const contentRef = React.useRef<HTMLTextAreaElement>(null);
   const transition = useTransition();
-  const isAdding = Boolean(transition.submission);
 
   React.useEffect(() => {
     if (actionData?.fieldErrors?.name) {
@@ -84,6 +84,26 @@ export default function NewJokeRoute() {
       contentRef.current?.focus();
     }
   }, [actionData?.fieldErrors]);
+
+  if (transition.submission) {
+    const name = transition.submission.formData.get("name");
+    const content = transition.submission.formData.get("content");
+
+    if (
+      typeof name === "string" &&
+      typeof content === "string" &&
+      !validateJokeName(name) &&
+      !validateJokeContent(content)
+    ) {
+      return (
+        <JokeDisplay
+          joke={{ name: name, content: content }}
+          isOwner
+          canDelete={false}
+        />
+      );
+    }
+  }
 
   return (
     <div>
@@ -143,8 +163,8 @@ export default function NewJokeRoute() {
               {actionData.formError}
             </p>
           ) : null}
-          <button type="submit" className="button" disabled={isAdding}>
-            {isAdding ? "Adding..." : "Add"}
+          <button type="submit" className="button">
+            Add
           </button>
         </div>
       </Form>

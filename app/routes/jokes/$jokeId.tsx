@@ -13,6 +13,7 @@ import {
   useParams,
   useTransition,
 } from "@remix-run/react";
+import JokeDisplay from "~/components/joke";
 
 import { db } from "~/utils/db.server";
 import { getUserId, requireUserId } from "~/utils/session.server";
@@ -83,19 +84,11 @@ export default function JokeRoute() {
   const isDeleting = Boolean(transition.submission);
 
   return (
-    <div>
-      <p>Here's your hilarious joke:</p>
-      <p>{data.joke.content}</p>
-      <Link to=".">{data.joke.name} Permalink</Link>
-      {data.isOwner ? (
-        <Form method="post">
-          <input type="hidden" name="intent" value="delete" />
-          <button type="submit" className="button" disabled={isDeleting}>
-            {isDeleting ? "Deleting..." : "Delete"}
-          </button>
-        </Form>
-      ) : null}
-    </div>
+    <JokeDisplay
+      joke={data.joke}
+      isOwner={data.isOwner}
+      isDeleting={isDeleting}
+    />
   );
 }
 
